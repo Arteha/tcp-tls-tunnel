@@ -1,6 +1,17 @@
 {
   "name": "tcp-tls-tunnel",
   "version": "1.0.0",
+  "keywords": [
+    "cipher suites",
+    "ciphers",
+    "cipher",
+    "tls",
+    "grease",
+    "session ticket",
+    "ssl session",
+    "TLS_EMPTY_RENEGOTIATION_INFO_SCSV",
+    "remove TLS_EMPTY_RENEGOTIATION_INFO_SCSV"
+  ],
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "scripts": {
