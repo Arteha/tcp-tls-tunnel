@@ -5,3 +5,7 @@ examples/
 specs/
 package-lock\.json
 yarn\.lock
+tslint\.json
+tsconfig\.json
+jest\.config\.json
+\.gitignore
