@@ -5,9 +5,9 @@
 <!-- /TITLE -->
 
 <!-- BADGES/ -->
-<span class="badge-npmversion"><a href="https://npmjs.org/package/tcp-tls-tunnel" title="View this project on NPM"><img src="https://img.shields.io/npm/v/badges.svg" alt="NPM version" /></a></span>
-<span class="badge-npmdownloads"><a href="https://npmjs.org/package/tcp-tls-tunnel" title="View this project on NPM"><img src="https://img.shields.io/npm/dm/badges.svg" alt="NPM downloads" /></a></span>
-<span class="badge-typescript"><a href="https://github.com/Arteha/tcp-tls-tunnel" title="View this project on GitHub"><img src="https://badgen.net/badge/Built%20With/TypeScript/blue" alt="NPM downloads" /></a></span>
+<span class="badge-npmversion"><a href="https://npmjs.org/package/tcp-tls-tunnel" title="View this project on NPM"><img src="https://img.shields.io/npm/v/tcp-tls-tunnel.svg" alt="NPM version" /></a></span>
+<span class="badge-npmdownloads"><a href="https://npmjs.org/package/tcp-tls-tunnel" title="View this project on NPM"><img src="https://img.shields.io/npm/dm/tcp-tls-tunnel.svg" alt="NPM downloads" /></a></span>
+<span class="badge-typescript"><a href="https://github.com/Arteha/tcp-tls-tunnel" title="View this project on GitHub"><img src="https://img.shields.io/npm/types/tcp-tls-tunnel.svg" alt="NPM downloads" /></a></span>
 <!-- /BADGES -->
 
 Provides NodeJS Http and Https agents that establish TCP and TLS connections via our modified poxy server.
