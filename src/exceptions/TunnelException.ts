@@ -1,0 +1,1 @@
+export class TunnelException extends Error {}
