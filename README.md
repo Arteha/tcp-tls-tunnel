@@ -11,8 +11,8 @@
 <!-- /BADGES -->
 
 Provides NodeJS Http and Https agents that establish TCP and TLS connections via our modified poxy server.
-Out TLS Layer pass ciphers and has ssl session ticket support by default.
-Iif you are really interested in testing it for free, you can find out more details in our [Discord Channel](https://discord.gg/4HRVxNP).
+Our TLS Layer pass ciphers and has SSL session ticket support by default.
+If you are really interested in testing it for free, you can find out more details in our [Discord Channel](https://discord.gg/4HRVxNP).
 
 Installation: `npm i tcp-tls-tunnel`
 
