@@ -1,7 +1,8 @@
-import { Socket } from "net";
+import {Socket} from "net";
 import * as http from "http";
-import { Address, Credentials, Proxy } from "../types";
-import { TunnelException } from "../exceptions";
+import {Address, Credentials, Proxy} from "../types";
+import {TunnelException, TunnelResponseException} from "../exceptions";
+import {IncomingMessage} from "http";
 
 
 export enum CLIENTS
@@ -81,16 +82,6 @@ export class TunnelsFactory
                 headers
             });
 
-            let timeoutId: any;
-
-            const on = () =>
-            {
-                timeoutId = setTimeout(onTimeout, timeout);
-                req.on("error", onError);
-                req.on("close", onClose);
-                req.on("connect", onConnect);
-            }
-
             const off = () =>
             {
                 clearTimeout(timeoutId);
@@ -120,13 +111,57 @@ export class TunnelsFactory
                 reject(new TunnelException("TUNNEL_CONNECTION_UNEXPECTEDLY_CLOSED"));
             }
 
-            const onConnect = () =>
+            const onConnect = (res: IncomingMessage, socket: Socket) =>
             {
+                const newTimeout = timeout - (Date.now() - startedAt);
                 off();
-                resolve(req.socket);
+
+                if (res.statusCode == 200)
+                    resolve(socket);
+                else
+                {
+                    const chunks: Array<Buffer> = [];
+                    const onData = (chunk: Buffer) => chunks.push(chunk);
+
+                    const onTimeout = () =>
+                    {
+                        off();
+                        reject(new TunnelException("TUNNEL_CONNECTION_TIMED_OUT"));
+                    }
+
+                    const onError = (e: Error) =>
+                    {
+                        off();
+                        reject(new TunnelException(e.message || `${e}`))
+                    }
+
+                    const onEnd = () =>
+                    {
+                        off();
+                        reject(new TunnelResponseException(res.statusCode || 0, Buffer.concat(chunks).toString()));
+                    }
+
+                    const off = () =>
+                    {
+                        clearTimeout(timeoutId);
+                        res.off("data", onData);
+                        res.off("error", onError);
+                        res.off("end", onEnd);
+                    }
+
+                    const timeoutId = setTimeout(onTimeout, newTimeout);
+                    res.on("data", onData);
+                    res.on("error", onError);
+                    res.on("end", onEnd);
+                }
             }
 
-            on();
+            const startedAt = Date.now();
+            const timeoutId = setTimeout(onTimeout, timeout);
+            req.on("error", onError);
+            req.on("close", onClose);
+            req.on("connect", onConnect);
+
             req.end();
         })
     }
