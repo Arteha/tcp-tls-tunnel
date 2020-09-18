@@ -1,8 +1,8 @@
-import {Socket} from "net";
+import { Socket } from "net";
 import * as http from "http";
-import {Address, Credentials, Proxy} from "../types";
-import {TunnelException, TunnelResponseException} from "../exceptions";
-import {IncomingMessage} from "http";
+import { Address, Credentials, Proxy } from "../types";
+import { TunnelException, TunnelResponseException } from "../exceptions";
+import { IncomingMessage } from "http";
 
 
 export enum CLIENTS
