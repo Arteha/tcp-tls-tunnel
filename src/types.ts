@@ -11,7 +11,7 @@ export type Credentials = {
 }
 
 export type Proxy = Address & {
-    auth: Credentials
+    auth?: Credentials
 }
 
 export interface IRequestOptions extends RequestOptions
