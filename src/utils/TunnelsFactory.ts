@@ -138,7 +138,7 @@ export class TunnelsFactory
                     const onEnd = () =>
                     {
                         off();
-                        reject(new TunnelResponseException(res.statusCode || 0, Buffer.concat(chunks).toString()));
+                        reject(new TunnelResponseException(res.statusCode || 0, res.headers["error"]?.toString()));
                     }
 
                     const off = () =>
