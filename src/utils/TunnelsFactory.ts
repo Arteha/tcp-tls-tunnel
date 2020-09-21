@@ -58,7 +58,7 @@ export class TunnelsFactory
                 Authorization: auth
                     ? `Basic ${Buffer.from(`${auth.login}:${auth.password}`).toString("base64")}`
                     : undefined,
-                Secure: options.secure ? "1" : undefined,
+                Secure: options.secure ? "1" : "0",
                 Client: options.client || undefined,
                 Proxy: proxy
                     ? proxy.auth
