@@ -1,8 +1,4 @@
-<!-- TITLE/ -->
-
-<h1>TCP TLS Tunnel</h1>
-
-<!-- /TITLE -->
+# TCP TLS Tunnel
 
 <!-- BADGES/ -->
 <span class="badge-npmversion"><a href="https://npmjs.org/package/tcp-tls-tunnel" title="View this project on NPM"><img src="https://img.shields.io/npm/v/tcp-tls-tunnel.svg" alt="NPM version" /></a></span>
