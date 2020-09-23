@@ -1,5 +1,3 @@
-import { RequestOptions } from "http";
-
 export type Address = {
     host: string
     port: number | string
@@ -11,10 +9,5 @@ export type Credentials = {
 }
 
 export type Proxy = Address & {
-    auth?: Credentials
-}
-
-export interface IRequestOptions extends RequestOptions
-{
-    servername?: string
+    auth?: Credentials | null
 }

@@ -1,10 +1,15 @@
 import { Socket } from "net";
-import { IRequestOptions, Proxy } from "../types";
+import { Proxy } from "../types";
+import { RequestOptions as HttpRequestOptions } from "http";
+import { RequestOptions as HttpsRequestOptions } from "https";
 
 
 export interface IAgent
 {
     setProxy(proxy: Proxy | null): void
 
-    createConnection(options: IRequestOptions, cb?: (a: Error | null, socket?: Socket) => void): void
+    createConnection(
+        options: HttpRequestOptions | HttpsRequestOptions,
+        cb?: (a: Error | null, socket?: Socket) => void
+    ): void
 }

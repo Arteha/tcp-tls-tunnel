@@ -2,8 +2,8 @@ import * as https from "https";
 import { IAgent } from "./IAgent";
 import { Socket } from "net";
 import { SecureTunnelOptions, TunnelsFactory } from "../utils";
-import { IRequestOptions, Proxy } from "../types";
-import { AgentOptions } from "https";
+import { Proxy } from "../types";
+import { AgentOptions, RequestOptions } from "https";
 
 
 export class TunnelHttpsAgent extends https.Agent implements IAgent
@@ -18,7 +18,7 @@ export class TunnelHttpsAgent extends https.Agent implements IAgent
         this.config.proxy = proxy;
     }
 
-    public createConnection(options: IRequestOptions, cb: (a: Error | null, socket?: Socket) => void): void
+    public createConnection(options: RequestOptions, cb: (a: Error | null, socket?: Socket) => void): void
     {
         const host = options.host || "localhost";
         const port = Number(options.port || this.defaultPort);
