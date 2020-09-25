@@ -82,17 +82,23 @@ export class TunnelsFactory
                 headers
             });
 
-            const off = () =>
+            const off = (becauseOfTimeout?: boolean) =>
             {
                 clearTimeout(timeoutId);
                 req.off("error", onError);
                 req.off("close", onClose);
                 req.off("connect", onConnect);
+
+                if (becauseOfTimeout)
+                {
+                    // prevent process crashing of "socket hang up" errors etc.
+                    req.on("error", () => void 0);
+                }
             }
 
             const onTimeout = () =>
             {
-                off();
+                off(true);
                 req.abort();
                 reject(new TunnelException("TUNNEL_CONNECTION_TIMED_OUT"));
             }
@@ -125,7 +131,7 @@ export class TunnelsFactory
 
                     const onTimeout = () =>
                     {
-                        off();
+                        off(true);
                         reject(new TunnelException("TUNNEL_CONNECTION_TIMED_OUT"));
                     }
 
@@ -141,12 +147,18 @@ export class TunnelsFactory
                         reject(new TunnelResponseException(res.statusCode || 0, res.headers["error"]?.toString()));
                     }
 
-                    const off = () =>
+                    const off = (becauseOfTimeout?: boolean) =>
                     {
                         clearTimeout(timeoutId);
                         res.off("data", onData);
                         res.off("error", onError);
                         res.off("end", onEnd);
+
+                        if (becauseOfTimeout)
+                        {
+                            // prevent crashing of "socket hang up" errors etc.
+                            res.on("error", () => void 0);
+                        }
                     }
 
                     const timeoutId = setTimeout(onTimeout, newTimeout);

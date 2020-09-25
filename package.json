@@ -1,7 +1,7 @@
 {
   "name": "tcp-tls-tunnel",
   "description": "Provides NodeJS Http and Https agents that establish TCP and TLS connections via our modified poxy server.",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "scripts": {
