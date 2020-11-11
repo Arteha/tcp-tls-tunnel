@@ -3,6 +3,7 @@ import * as http from "http";
 import { Address, Credentials, Proxy } from "../types";
 import { TunnelException, TunnelResponseException } from "../exceptions";
 import { IncomingMessage } from "http";
+import { TLSSocket } from "tls";
 
 
 export enum CLIENTS
@@ -37,19 +38,30 @@ export type TunnelOptions = Address & {
 }
 
 export type SecureTunnelOptions = TunnelOptions & {
+    insecureSkipVerify?: boolean
     client?: Clients // TLS client that tunnel will apply.
 }
 
-export type SocketOptions = SecureTunnelOptions & {
+export type Http2TunnelOptions = SecureTunnelOptions & {
+    http2?: boolean
+}
+
+export type SocketOptions = Http2TunnelOptions & {
     secure?: boolean
     target: TargetOptions
 }
 
+export type SocketInfo = {
+    encrypted: boolean
+    alpnProtocol?: string
+}
+
 export class TunnelsFactory
 {
-    public static establishSocket(options: SocketOptions, timeout: number = 2 * 60 * 1000): Promise<Socket>
+    public static establishSocket(options: SocketOptions, timeout: number = 2 * 60 * 1000):
+        Promise<[Socket, SocketInfo]>
     {
-        return new Promise<Socket>((resolve, reject) =>
+        return new Promise<[Socket, SocketInfo]>((resolve, reject) =>
         {
             const {auth, proxy} = options;
             const headers = {
@@ -65,7 +77,9 @@ export class TunnelsFactory
                         ? `${proxy.auth.login}:${proxy.auth.password}@${proxy.host}:${proxy.port}`
                         : `${proxy.host}:${proxy.port}`
                     : undefined,
-                "Server-Name": options.target.serverName || undefined
+                "Server-Name": options.target.serverName || undefined,
+                "HTTP2": Number(!!options.http2),
+                "Insecure-Skip-Verify": Number(!!options.insecureSkipVerify),
             };
 
             for (const n in headers)
@@ -122,8 +136,18 @@ export class TunnelsFactory
                 const newTimeout = timeout - (Date.now() - startedAt);
                 off();
 
+                const info: SocketInfo = {
+                    encrypted: false
+                }
+                const alpnProtocol = res.headers["alpn-protocol"];
+                if (options.secure && alpnProtocol)
+                {
+                    info.encrypted = true;
+                    info.alpnProtocol = alpnProtocol instanceof Array ? alpnProtocol[0] : alpnProtocol;
+                }
+
                 if (res.statusCode == 200)
-                    resolve(socket);
+                    resolve([socket, info]);
                 else
                 {
                     const chunks: Array<Buffer> = [];

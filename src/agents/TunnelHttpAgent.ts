@@ -1,12 +1,12 @@
 import * as http from "http";
-import { IAgent } from "./IAgent";
 import { Socket } from "net";
 import { TunnelOptions, TunnelsFactory } from "../utils";
 import { Proxy } from "../types";
 import { AgentOptions, RequestOptions } from "http";
+import { IHttpAgent } from "./IHttpAgent";
 
 
-export class TunnelHttpAgent extends http.Agent implements IAgent
+export class TunnelHttpAgent extends http.Agent implements IHttpAgent
 {
     private readonly defaultPort = 80;
     private readonly defaultTimeout = 2 * 60 * 1000;
@@ -26,7 +26,7 @@ export class TunnelHttpAgent extends http.Agent implements IAgent
             ...this.config,
             target: {host, port}
         }, options.timeout || this.defaultTimeout)
-            .then(socket => cb(null, socket))
+            .then(([socket]) => cb(null, socket))
             .catch(e => cb(e));
     }
 }

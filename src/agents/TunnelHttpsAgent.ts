@@ -1,12 +1,12 @@
 import * as https from "https";
-import { IAgent } from "./IAgent";
+import { IHttpAgent } from "./IHttpAgent";
 import { Socket } from "net";
 import { SecureTunnelOptions, TunnelsFactory } from "../utils";
 import { Proxy } from "../types";
 import { AgentOptions, RequestOptions } from "https";
 
 
-export class TunnelHttpsAgent extends https.Agent implements IAgent
+export class TunnelHttpsAgent extends https.Agent implements IHttpAgent
 {
     private readonly defaultPort = 443;
     private readonly defaultTimeout = 2 * 60 * 1000;
@@ -31,7 +31,7 @@ export class TunnelHttpsAgent extends https.Agent implements IAgent
             },
             secure: true
         }, options.timeout || this.defaultTimeout)
-            .then(socket => cb(null, socket))
+            .then(([socket]) => cb(null, socket))
             .catch(e => cb(e));
     }
 }
