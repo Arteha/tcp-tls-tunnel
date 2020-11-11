@@ -27,7 +27,7 @@ const tunnelHttpsAgent = new TunnelHttpsAgent({
 axios.get("https://ja3er.com/json", {
     httpsAgent: tunnelHttpsAgent,
     headers: normalizeHeaders({
-        Host: "www.howsmyssl.com",
+        Host: "ja3er.com",
         Connection: "keep-alive",
         "Upgrade-Insecure-Requests": "1",
         "User-Agent": USER_AGENT,

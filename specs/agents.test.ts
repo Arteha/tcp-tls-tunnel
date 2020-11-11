@@ -1,6 +1,7 @@
 import axios from "axios";
 import { TunnelHttpAgent, TunnelHttpsAgent } from "../src/agents";
 import { CLIENTS, normalizeHeaders } from "../src/utils";
+import { TunnelResponseException } from "../src/exceptions";
 
 
 describe("Agents test suite", () =>
@@ -17,8 +18,15 @@ describe("Agents test suite", () =>
         auth: undefined,
         client: CLIENTS.CHROME_83
     });
+    const insecureTunnelHttpsAgent = new TunnelHttpsAgent({
+        host: "127.0.0.1",
+        port: 1337,
+        auth: undefined,
+        client: CLIENTS.CHROME_83,
+        insecureSkipVerify: true
+    });
 
-    it("Should properly do https request to howsmyssl via tunnel", done =>
+    it("Should properly do an https request to howsmyssl via tunnel", done =>
     {
         axios.get("https://www.howsmyssl.com/a/check", {
             httpAgent: tunnelHttpAgent,
@@ -71,7 +79,7 @@ describe("Agents test suite", () =>
             .catch(e => done.fail(e))
     })
 
-    it("Should properly do http request to google via tunnel", done =>
+    it("Should properly do an http request to google via tunnel", done =>
     {
         axios.get("http://www.google.com/", {
             maxRedirects: 0,
@@ -90,5 +98,55 @@ describe("Agents test suite", () =>
         })
             .then(result => done())
             .catch(e => done.fail(e))
+    })
+
+    it("Should properly do an insecure https request to expired.badssl.com via tunnel", done =>
+    {
+        axios.get("https://expired.badssl.com/", {
+            maxRedirects: 0,
+            httpAgent: tunnelHttpAgent,
+            httpsAgent: insecureTunnelHttpsAgent,
+            headers: normalizeHeaders({
+                Host: "expired.badssl.com",
+                Connection: "keep-alive",
+                "Upgrade-Insecure-Requests": "1",
+                "User-Agent": USER_AGENT,
+                Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,/;q=0.8,application/signed-exchange;v=b3;q=0.9",
+                "Accept-Encoding": "gzip, deflate, br",
+                "Accept-Language": "ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7"
+            }),
+            validateStatus: status => [2, 3].includes(Math.floor(status / 100)) // accept only 2xx and 3xx statuses
+        })
+            .then(result => done())
+            .catch(e => done.fail(e))
+    })
+
+    it("Should properly catch 525 error requesting expired.badssl.com via tunnel", done =>
+    {
+        axios.get("https://expired.badssl.com/", {
+            maxRedirects: 0,
+            httpAgent: tunnelHttpAgent,
+            httpsAgent: tunnelHttpsAgent,
+            headers: normalizeHeaders({
+                Host: "expired.badssl.com",
+                Connection: "keep-alive",
+                "Upgrade-Insecure-Requests": "1",
+                "User-Agent": USER_AGENT,
+                Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,/;q=0.8,application/signed-exchange;v=b3;q=0.9",
+                "Accept-Encoding": "gzip, deflate, br",
+                "Accept-Language": "ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7"
+            }),
+            validateStatus: status => [2, 3].includes(Math.floor(status / 100)) // accept only 2xx and 3xx statuses
+        })
+            .then(result => done.fail(new Error("Tunnel must respond an 525 error.")))
+            .catch(e =>
+            {
+                if (e instanceof TunnelResponseException && e.status == 525)
+                {
+                    done();
+                    return;
+                }
+                done.fail(e)
+            })
     })
 });
