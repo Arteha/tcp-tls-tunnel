@@ -8,7 +8,8 @@
     "clean": "rimraf ./lib",
     "build": "tsc",
     "watch": "tsc -w",
-    "test": "jest"
+    "test": "jest",
+    "deploy": "npm run clean && npm run build && npm run test && npm publish"
   },
   "dependencies": {},
   "devDependencies": {
